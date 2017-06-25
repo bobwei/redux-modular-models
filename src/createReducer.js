@@ -33,11 +33,11 @@ const createReducer = ({ models }: Options) => {
           R.apply(
             R.compose,
             R.map(
-              entity =>
-                R.converge(R.assocPath([model, 'entities']), [
+              entityModel =>
+                R.converge(R.assocPath([entityModel, 'entities']), [
                   R.compose(
-                    R.merge(R.__, normalizedData.entities[entity]),
-                    R.pathOr({}, [model, 'entities']),
+                    R.merge(R.__, normalizedData.entities[entityModel]),
+                    R.pathOr({}, [entityModel, 'entities']),
                   ),
                   R.identity,
                 ]),
