@@ -4,12 +4,16 @@
   "description": "",
   "scripts": {
     "start": "babel-node src/index.js",
+    "build": "yarn run build:lib",
+    "build:lib": "babel src --out-dir lib --ignore __tests__",
+    "build:watch": "babel src --watch --out-dir lib --ignore __tests__",
     "precommit": "lint-staged --verbose",
     "format": "prettier --single-quote --trailing-comma all '{src,__{tests,mocks}__}/**/*.{js,jsx}' --write",
     "test": "jest --onlyChanged --watch",
     "test:all": "jest",
     "lint-staged": "lint-staged --verbose",
     "flow": "flow",
+    "prepublish": "yarn run test:all && yarn run build",
     "dev": "nodemon src/index.js --exec babel-node"
   },
   "author": "bob61016@gmail.com",
