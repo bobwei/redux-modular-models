@@ -3,8 +3,7 @@ import { schema, denormalize } from 'normalizr';
 import { createSelector } from 'reselect';
 import R from 'ramda';
 
-import createReducer from '../src/createReducer';
-import { arrayRemoveAll, arrayConcat } from '../src/actions';
+import { createReducer, arrayRemoveAll, arrayConcat } from '../src/index';
 
 it('can createReducer and update state with actions', () => {
   const options = { idAttribute: 'objectId' };
