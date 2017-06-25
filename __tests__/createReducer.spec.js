@@ -1,5 +1,7 @@
 import { createStore, combineReducers } from 'redux';
-import { schema } from 'normalizr';
+import { schema, denormalize } from 'normalizr';
+import { createSelector } from 'reselect';
+import R from 'ramda';
 
 import createReducer from '../src/createReducer';
 import { arrayRemoveAll, arrayConcat } from '../src/actions';
@@ -105,5 +107,21 @@ it('can createReducer and update state with actions', () => {
         },
       },
     },
+  });
+
+  const selector = createSelector(
+    /* item entities */
+    R.path(['models', 'item', 'entities']),
+    /* item array with arrayId === 'all' */
+    R.path(['models', 'item', 'arrays', 'all']),
+    (item, itemList) => ({
+      itemList: denormalize(itemList, [itemSchema], { item }),
+    }),
+  );
+  expect(selector(getState())).toEqual({
+    itemList: [
+      { objectId: 1, title: 'item1' },
+      { objectId: 2, title: 'item2' },
+    ],
   });
 });

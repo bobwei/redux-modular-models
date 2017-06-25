@@ -137,3 +137,28 @@ expect(getState()).toEqual({
   },
 });
 ```
+
+### Denormalize data and mapStateToprops
+
+Create efficient selector with reselect
+```js
+const selector = createSelector(
+  /* item entities */
+  R.path(['models', 'item', 'entities']),
+  /* item array with arrayId === 'all' */
+  R.path(['models', 'item', 'arrays', 'all']),
+  (item, itemList) => ({
+    itemList: denormalize(itemList, [itemSchema], { item }),
+  }),
+);
+```
+
+mapStateToprops
+```js
+expect(selector(getState())).toEqual({
+  itemList: [
+    { objectId: 1, title: 'item1' },
+    { objectId: 2, title: 'item2' },
+  ],
+});
+```
