@@ -1,9 +1,11 @@
 import { createStore, combineReducers } from 'redux';
+import { schema } from 'normalizr';
 
 import createReducer from '../src/createReducer';
-import { arrayRemoveAll } from '../src/actions';
+import { arrayRemoveAll, arrayConcat } from '../src/actions';
 
-it('can createReducer', () => {
+it('can createReducer and update state with actions', () => {
+  const itemSchema = new schema.Entity('item', {}, { idAttribute: 'objectId' });
   const rootReducer = combineReducers({
     models: createReducer({
       models: [
@@ -20,6 +22,7 @@ it('can createReducer', () => {
               all: [1],
             },
           },
+          schema: itemSchema,
         },
         {
           name: 'collection',
@@ -62,6 +65,37 @@ it('can createReducer', () => {
         },
         arrays: {
           all: [],
+        },
+      },
+      collection: {
+        entities: {},
+        arrays: {
+          all: [],
+        },
+      },
+    },
+  });
+
+  const data = [
+    { objectId: 1, title: 'item1' },
+    { objectId: 2, title: 'item2' },
+  ];
+  dispatch(arrayConcat(data, 'item', 'all'));
+  expect(getState()).toEqual({
+    models: {
+      item: {
+        entities: {
+          '1': {
+            objectId: 1,
+            title: 'item1',
+          },
+          '2': {
+            objectId: 2,
+            title: 'item2',
+          },
+        },
+        arrays: {
+          all: [1, 2],
         },
       },
       collection: {

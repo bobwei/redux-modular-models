@@ -8,3 +8,9 @@ export const arrayRemoveAll = createAction(
   undefined,
   (model, arrayId) => ({ model, arrayId }),
 );
+
+export const arrayConcat = createAction(
+  `${modulePrefix}arrayConcat`,
+  undefined,
+  (payload, model, arrayId) => ({ model, arrayId }),
+);

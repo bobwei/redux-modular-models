@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "dotenv": "^4.0.0",
+    "normalizr": "^3.2.3",
     "ramda": "^0.24.1",
     "redux": "^3.7.0",
     "redux-actions": "^2.0.3"

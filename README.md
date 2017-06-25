@@ -15,6 +15,7 @@ The store should know how to handle actions. To enable this, we need to create t
 import { createStore, combineReducers } from 'redux';
 import { createReducer } from 'redux-modular-models';
 
+const itemSchema = new schema.Entity('item', {}, { idAttribute: 'objectId' });
 const rootReducer = combineReducers({
   models: createReducer({
     models: [
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
             all: [1],
           },
         },
+        schema: itemSchema,
       },
       {
         name: 'collection',
@@ -86,6 +88,44 @@ expect(getState()).toEqual({
       },
       arrays: {
         all: [],
+      },
+    },
+    collection: {
+      entities: {},
+      arrays: {
+        all: [],
+      },
+    },
+  },
+});
+```
+
+Concat data to array with model === 'item' && arrayId === 'all'
+
+```js
+const data = [
+  { objectId: 1, title: 'item1' },
+  { objectId: 2, title: 'item2' },
+];
+dispatch(arrayConcat(data, 'item', 'all'));
+```
+
+```js
+expect(getState()).toEqual({
+  models: {
+    item: {
+      entities: {
+        '1': {
+          objectId: 1,
+          title: 'item1',
+        },
+        '2': {
+          objectId: 2,
+          title: 'item2',
+        },
+      },
+      arrays: {
+        all: [1, 2],
       },
     },
     collection: {
