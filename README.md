@@ -14,6 +14,9 @@ The store should know how to handle actions. To enable this, we need to create t
 ```js
 import { createStore, combineReducers } from 'redux';
 import { createReducer } from 'redux-modular-models';
+import { schema, denormalize } from 'normalizr';
+import { createSelector } from 'reselect';
+import R from 'ramda';
 
 const options = { idAttribute: 'objectId' };
 const userSchema = new schema.Entity('user', {}, options);
