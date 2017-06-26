@@ -1,11 +1,11 @@
 {
   "name": "redux-modular-models",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.1.0",
+  "description": "Manage models state for CRUD with ease.",
+  "main": "./lib/index.js",
   "scripts": {
     "start": "babel-node src/index.js",
-    "build": "yarn run build:lib",
-    "build:lib": "babel src --out-dir lib --ignore __tests__",
+    "build": "NODE_ENV=production webpack -p",
     "build:watch": "babel src --watch --out-dir lib --ignore __tests__",
     "precommit": "lint-staged --verbose",
     "format": "prettier --single-quote --trailing-comma all '{src,__{tests,mocks}__}/**/*.{js,jsx}' --write",
@@ -13,7 +13,8 @@
     "test:all": "jest",
     "lint-staged": "lint-staged --verbose",
     "flow": "flow",
-    "prepublish": "yarn run test:all && yarn run build",
+    "prepublish": "yarn run clean && yarn run test:all && yarn run build",
+    "clean": "rimraf lib",
     "dev": "nodemon src/index.js --exec babel-node"
   },
   "author": "bob61016@gmail.com",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.1.0",
     "babel-plugin-module-resolver": "^2.7.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-flow": "^6.23.0",
@@ -29,6 +31,7 @@
     "eslint-config-airbnb": "^15.0.1",
     "eslint-config-prettier": "^2.1.1",
     "eslint-import-resolver-babel-module": "^3.0.0",
+    "eslint-loader": "^1.8.0",
     "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-jsx-a11y": "^5.0.3",
     "eslint-plugin-react": "^7.0.1",
@@ -38,10 +41,17 @@
     "lint-staged": "^3.6.0",
     "nodemon": "^1.11.0",
     "prettier": "^1.4.2",
-    "reselect": "^3.0.1"
+    "reselect": "^3.0.1",
+    "rimraf": "^2.6.1",
+    "webpack": "^3.0.0"
   },
   "dependencies": {
-    "dotenv": "^4.0.0",
+    "normalizr": "^3.2.3",
+    "ramda": "^0.24.1",
+    "redux": "^3.7.0",
+    "redux-actions": "^2.0.3"
+  },
+  "peerDependencies": {
     "normalizr": "^3.2.3",
     "ramda": "^0.24.1",
     "redux": "^3.7.0",
