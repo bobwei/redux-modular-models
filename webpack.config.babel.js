@@ -20,7 +20,7 @@ const config = {
     loaders: [
       {
         test: /\.(js|jsx)$/,
-        loaders: ['babel-loader', 'eslint-loader'],
+        loaders: ['babel-loader', 'eslint-loader', 'remove-flow-types-loader'],
         include: SRC_PATH,
         exclude: /node_modules/,
       },
