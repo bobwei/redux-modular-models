@@ -4,7 +4,7 @@ import { handleActions } from 'redux-actions';
 import { normalize } from 'normalizr';
 
 import createInitialState from './createInitialState';
-import { arrayRemoveAll, arrayConcat } from './actions';
+import { arrayRemoveAll, arrayConcat, entityMerge } from './actions';
 
 type Options = {
   models: Array<{
@@ -52,6 +52,28 @@ const createReducer = ({ models }: Options) => {
             ),
             R.identity,
           ]),
+        )(state);
+        return result;
+      },
+      [entityMerge]: (state, { payload, meta: { model } }) => {
+        const schema = R.compose(R.path([model, 'schema']))(indexedModels);
+        const normalizedData = normalize(payload, schema);
+        const result = R.compose(
+          /* for each entity in normalizedData.entities, merge to model.entities */
+          R.apply(
+            R.compose,
+            R.map(
+              entityModel =>
+                R.converge(R.assocPath([entityModel, 'entities']), [
+                  R.compose(
+                    R.mergeDeepLeft(normalizedData.entities[entityModel]),
+                    R.pathOr({}, [entityModel, 'entities']),
+                  ),
+                  R.identity,
+                ]),
+              R.compose(R.keys, R.prop('entities'))(normalizedData),
+            ),
+          ),
         )(state);
         return result;
       },

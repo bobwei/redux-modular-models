@@ -14,3 +14,9 @@ export const arrayConcat = createAction(
   undefined,
   (payload, model, arrayId) => ({ model, arrayId }),
 );
+
+export const entityMerge = createAction(
+  `${modulePrefix}entityMerge`,
+  undefined,
+  (payload, model) => ({ model }),
+);

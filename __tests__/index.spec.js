@@ -3,7 +3,12 @@ import { schema, denormalize } from 'normalizr';
 import { createSelector } from 'reselect';
 import R from 'ramda';
 
-import { createReducer, arrayRemoveAll, arrayConcat } from '../src/index';
+import {
+  createReducer,
+  arrayRemoveAll,
+  arrayConcat,
+  entityMerge,
+} from '../src/index';
 
 it('can createReducer and update state with actions', () => {
   const options = { idAttribute: 'objectId' };
@@ -151,5 +156,81 @@ it('can createReducer and update state with actions', () => {
       { objectId: 1, title: 'item1', user: { objectId: 1, name: 'Bob Wei' } },
       { objectId: 2, title: 'item2' },
     ],
+  });
+
+  dispatch(entityMerge({ objectId: 1, title: 'Hello World' }, 'item'));
+  expect(getState()).toEqual({
+    models: {
+      user: {
+        entities: {
+          1: { objectId: 1, name: 'Bob Wei' },
+        },
+        arrays: {
+          all: [],
+        },
+      },
+      item: {
+        entities: {
+          '1': {
+            objectId: 1,
+            title: 'Hello World',
+            user: 1,
+          },
+          '2': {
+            objectId: 2,
+            title: 'item2',
+          },
+        },
+        arrays: {
+          all: [1, 2],
+        },
+      },
+      collection: {
+        entities: {},
+        arrays: {
+          all: [],
+        },
+      },
+    },
+  });
+
+  dispatch(entityMerge({ objectId: 3, title: 'item3' }, 'item'));
+  expect(getState()).toEqual({
+    models: {
+      user: {
+        entities: {
+          1: { objectId: 1, name: 'Bob Wei' },
+        },
+        arrays: {
+          all: [],
+        },
+      },
+      item: {
+        entities: {
+          '1': {
+            objectId: 1,
+            title: 'Hello World',
+            user: 1,
+          },
+          '2': {
+            objectId: 2,
+            title: 'item2',
+          },
+          '3': {
+            objectId: 3,
+            title: 'item3',
+          },
+        },
+        arrays: {
+          all: [1, 2],
+        },
+      },
+      collection: {
+        entities: {},
+        arrays: {
+          all: [],
+        },
+      },
+    },
   });
 });

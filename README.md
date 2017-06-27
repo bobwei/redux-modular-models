@@ -193,3 +193,91 @@ expect(selector(getState())).toEqual({
   ],
 });
 ```
+
+Merge data to entities with model === 'item'
+
+```js
+dispatch(entityMerge({ objectId: 1, title: 'Hello World' }, 'item'));
+```
+
+```js
+expect(getState()).toEqual({
+  models: {
+    user: {
+      entities: {
+        1: { objectId: 1, name: 'Bob Wei' },
+      },
+      arrays: {
+        all: [],
+      },
+    },
+    item: {
+      entities: {
+        '1': {
+          objectId: 1,
+          title: 'Hello World',
+          user: 1,
+        },
+        '2': {
+          objectId: 2,
+          title: 'item2',
+        },
+      },
+      arrays: {
+        all: [1, 2],
+      },
+    },
+    collection: {
+      entities: {},
+      arrays: {
+        all: [],
+      },
+    },
+  },
+});
+```
+
+```js
+dispatch(entityMerge({ objectId: 3, title: 'item3' }, 'item'));
+```
+
+```js
+expect(getState()).toEqual({
+  models: {
+    user: {
+      entities: {
+        1: { objectId: 1, name: 'Bob Wei' },
+      },
+      arrays: {
+        all: [],
+      },
+    },
+    item: {
+      entities: {
+        '1': {
+          objectId: 1,
+          title: 'Hello World',
+          user: 1,
+        },
+        '2': {
+          objectId: 2,
+          title: 'item2',
+        },
+        '3': {
+          objectId: 3,
+          title: 'item3',
+        },
+      },
+      arrays: {
+        all: [1, 2],
+      },
+    },
+    collection: {
+      entities: {},
+      arrays: {
+        all: [],
+      },
+    },
+  },
+});
+```
