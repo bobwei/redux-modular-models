@@ -2,7 +2,15 @@
 
 Manage models state for CRUD with ease.
 
+- [Installation](#installation)
 - [Usage Example](#usage-example)
+
+
+## Installation
+
+```
+yarn add redux-modular-models
+```
 
 
 ## Usage Example
