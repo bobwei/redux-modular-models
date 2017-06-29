@@ -22,12 +22,16 @@ const createReducer = ({ models }: Options) => {
     {
       [arrayRemoveAll]: (state, { meta: { model, arrayId } }) =>
         R.assocPath([model, 'arrays', arrayId], [], state),
-      [arrayConcat]: (state, { payload, meta: { model, arrayId } }) => {
+      [arrayConcat]: (
+        state,
+        { payload, meta: { model, arrayId, options } },
+      ) => {
         /* array of schema */
         const schema = R.compose(R.of, R.path([model, 'schema']))(
           indexedModels,
         );
         const normalizedData = normalize(payload, schema);
+        const { reset = false } = options;
         const result = R.compose(
           /* for each entity in normalizedData.entities, merge to model.entities */
           R.apply(R.compose, [
@@ -48,7 +52,11 @@ const createReducer = ({ models }: Options) => {
           R.converge(R.assocPath([model, 'arrays', arrayId]), [
             R.compose(
               R.concat(normalizedData.result),
-              R.pathOr([], [model, 'arrays', arrayId]),
+              R.ifElse(
+                R.always(reset),
+                R.always([]),
+                R.pathOr([], [model, 'arrays', arrayId]),
+              ),
             ),
             R.identity,
           ]),

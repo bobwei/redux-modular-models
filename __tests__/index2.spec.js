@@ -98,4 +98,49 @@ describe('can concat empty array', () => {
       },
     });
   });
+
+  test('arrayConcat with reset', () => {
+    const data = [
+      { objectId: 1, title: 'item1', user: { objectId: 1, name: 'Bob Wei' } },
+      { objectId: 2, title: 'item2' },
+    ];
+    dispatch(arrayConcat(data, 'item', 'all', { reset: true }));
+    expect(getState()).toEqual({
+      models: {
+        user: {
+          entities: {
+            '1': {
+              objectId: 1,
+              name: 'Bob Wei',
+            },
+          },
+          arrays: {
+            all: [],
+          },
+        },
+        item: {
+          entities: {
+            '1': {
+              objectId: 1,
+              title: 'item1',
+              user: 1,
+            },
+            '2': {
+              objectId: 2,
+              title: 'item2',
+            },
+          },
+          arrays: {
+            all: [1, 2],
+          },
+        },
+        collection: {
+          entities: {},
+          arrays: {
+            all: [],
+          },
+        },
+      },
+    });
+  });
 });

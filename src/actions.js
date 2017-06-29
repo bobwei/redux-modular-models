@@ -12,7 +12,11 @@ export const arrayRemoveAll = createAction(
 export const arrayConcat = createAction(
   `${modulePrefix}arrayConcat`,
   undefined,
-  (payload, model, arrayId) => ({ model, arrayId }),
+  (payload, model, arrayId, options: { reset: boolean } = {}) => ({
+    model,
+    arrayId,
+    options,
+  }),
 );
 
 export const entityMerge = createAction(
