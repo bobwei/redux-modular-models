@@ -30,9 +30,9 @@ const createReducer = ({ models }: Options) => {
         const normalizedData = normalize(payload, schema);
         const result = R.compose(
           /* for each entity in normalizedData.entities, merge to model.entities */
-          R.apply(
-            R.compose,
-            R.map(
+          R.apply(R.compose, [
+            R.identity,
+            ...R.map(
               entityModel =>
                 R.converge(R.assocPath([entityModel, 'entities']), [
                   R.compose(
@@ -43,7 +43,7 @@ const createReducer = ({ models }: Options) => {
                 ]),
               R.compose(R.keys, R.prop('entities'))(normalizedData),
             ),
-          ),
+          ]),
           /* concat result to model.arrays.arrayId */
           R.converge(R.assocPath([model, 'arrays', arrayId]), [
             R.compose(
