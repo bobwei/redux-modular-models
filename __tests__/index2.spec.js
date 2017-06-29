@@ -3,7 +3,7 @@ import { schema } from 'normalizr';
 
 import { createReducer, arrayConcat } from '../src/index';
 
-it('can concat empty array', () => {
+describe('can concat empty array', () => {
   const options = { idAttribute: 'objectId' };
   const userSchema = new schema.Entity('user', {}, options);
   const itemSchema = new schema.Entity('item', { user: userSchema }, options);
@@ -37,32 +37,65 @@ it('can concat empty array', () => {
   });
   const store = createStore(rootReducer);
   const { getState, dispatch } = store;
-  expect(getState()).toEqual({
-    models: {
-      user: {
-        entities: {},
-        arrays: {
-          all: [],
-        },
-      },
-      item: {
-        entities: {
-          '1': {
-            objectId: 1,
-            title: 'item1',
+
+  test('initialState', () => {
+    expect(getState()).toEqual({
+      models: {
+        user: {
+          entities: {},
+          arrays: {
+            all: [],
           },
         },
-        arrays: {
-          all: [1],
+        item: {
+          entities: {
+            '1': {
+              objectId: 1,
+              title: 'item1',
+            },
+          },
+          arrays: {
+            all: [1],
+          },
+        },
+        collection: {
+          entities: {},
+          arrays: {
+            all: [],
+          },
         },
       },
-      collection: {
-        entities: {},
-        arrays: {
-          all: [],
-        },
-      },
-    },
+    });
   });
-  dispatch(arrayConcat([], 'item', 'all'));
+
+  test('arrayConcat', () => {
+    dispatch(arrayConcat([], 'item', 'all'));
+    expect(getState()).toEqual({
+      models: {
+        user: {
+          entities: {},
+          arrays: {
+            all: [],
+          },
+        },
+        item: {
+          entities: {
+            '1': {
+              objectId: 1,
+              title: 'item1',
+            },
+          },
+          arrays: {
+            all: [1],
+          },
+        },
+        collection: {
+          entities: {},
+          arrays: {
+            all: [],
+          },
+        },
+      },
+    });
+  });
 });
