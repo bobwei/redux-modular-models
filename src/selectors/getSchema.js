@@ -1,6 +1,8 @@
 import R from 'ramda';
 
-const getSchema = (model, schemaId, { reducerName = 'models' } = {}) =>
+import REDUCER_NAME from '../constants/REDUCER_NAME';
+
+const getSchema = (model, schemaId, { reducerName = REDUCER_NAME } = {}) =>
   R.path([reducerName, model, 'schemas', schemaId]);
 
 export default getSchema;
