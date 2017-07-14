@@ -42,7 +42,6 @@
     "nodemon": "^1.11.0",
     "prettier": "^1.4.2",
     "remove-flow-types-loader": "^1.0.0",
-    "reselect": "^3.0.1",
     "rimraf": "^2.6.1",
     "webpack": "^3.0.0"
   },
@@ -50,13 +49,15 @@
     "normalizr": "^3.2.3",
     "ramda": "^0.24.1",
     "redux": "^3.7.0",
-    "redux-actions": "^2.0.3"
+    "redux-actions": "^2.0.3",
+    "reselect": "^3.0.1"
   },
   "peerDependencies": {
     "normalizr": "^3.2.3",
     "ramda": "^0.24.1",
     "redux": "^3.7.0",
-    "redux-actions": "^2.0.3"
+    "redux-actions": "^2.0.3",
+    "reselect": "^3.0.1"
   },
   "jest": {
     "verbose": true,
