@@ -7,7 +7,7 @@ import getSchema from './getSchema';
 
 const getObject = (model, objectId, { reducerName = 'models' } = {}) =>
   createSelector(
-    getSchema(model, 'entity'),
+    getSchema(model, 'entity', { reducerName }),
     getEntities({ reducerName }),
     R.partial(denormalize, [objectId]),
   );
