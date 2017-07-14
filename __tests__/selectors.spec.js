@@ -1,7 +1,7 @@
 import { createStore, combineReducers } from 'redux';
 import { schema } from 'normalizr';
 
-import { createReducer, getEntities } from '../src/index';
+import { createReducer, getEntities, getSchema } from '../src/index';
 
 describe('selectors', () => {
   const options = { idAttribute: 'objectId' };
@@ -57,5 +57,17 @@ describe('selectors', () => {
       },
       collection: {},
     });
+  });
+
+  test(`getSchema('item', 'entity')`, () => {
+    const { getState } = store;
+    const selector = getSchema('item', 'entity');
+    expect(selector(getState())).toEqual(itemSchema);
+  });
+
+  test(`getSchema('item', 'array')`, () => {
+    const { getState } = store;
+    const selector = getSchema('item', 'array');
+    expect(selector(getState())).toEqual([itemSchema]);
   });
 });
