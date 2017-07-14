@@ -21,24 +21,71 @@ The store should know how to handle actions. To enable this, we need to create t
 
 ```js
 import { createStore, combineReducers } from 'redux';
-import { createReducer } from 'redux-modular-models';
-import { schema, denormalize } from 'normalizr';
-import { createSelector } from 'reselect';
-import R from 'ramda';
+import { schema } from 'normalizr';
 
-const options = { idAttribute: 'objectId' };
-const userSchema = new schema.Entity('user', {}, options);
-const itemSchema = new schema.Entity('item', { user: userSchema }, options);
-const rootReducer = combineReducers({
-  models: createReducer({
-    models: [
-      {
-        name: 'user',
-        schema: userSchema,
-      },
-      {
-        name: 'item',
-        initialState: {
+import {
+  createReducer,
+  arrayRemoveAll,
+  arrayConcat,
+  entityMerge,
+} from '../src/index';
+
+describe('can createReducer and update state with actions', () => {
+  const options = { idAttribute: 'objectId' };
+  const userSchema = new schema.Entity('user', {}, options);
+  const itemSchema = new schema.Entity('item', { user: userSchema }, options);
+  const collectionSchema = new schema.Entity(
+    'collection',
+    { user: userSchema },
+    options,
+  );
+
+  const rootReducer = combineReducers({
+    models: createReducer({
+      models: [
+        {
+          name: 'user',
+          schema: userSchema,
+        },
+        {
+          name: 'item',
+          initialState: {
+            entities: {
+              '1': {
+                objectId: 1,
+                title: 'item1',
+              },
+            },
+            arrays: {
+              all: [1],
+            },
+          },
+          schema: itemSchema,
+        },
+        {
+          name: 'collection',
+          schema: collectionSchema,
+        },
+      ],
+    }),
+  });
+  const store = createStore(rootReducer);
+
+  test('initialState', () => {
+    const { getState } = store;
+    expect(getState()).toEqual({
+      models: {
+        user: {
+          entities: {},
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: userSchema,
+            array: [userSchema],
+          },
+        },
+        item: {
           entities: {
             '1': {
               objectId: 1,
@@ -48,286 +95,269 @@ const rootReducer = combineReducers({
           arrays: {
             all: [1],
           },
+          schemas: {
+            entity: itemSchema,
+            array: [itemSchema],
+          },
         },
-        schema: itemSchema,
+        collection: {
+          entities: {},
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: collectionSchema,
+            array: [collectionSchema],
+          },
+        },
       },
-      {
-        name: 'collection',
+    });
+  });
+
+  test('arrayRemoveAll', () => {
+    const { dispatch, getState } = store;
+    dispatch(arrayRemoveAll('item', 'all'));
+    expect(getState()).toEqual({
+      models: {
+        user: {
+          entities: {},
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: userSchema,
+            array: [userSchema],
+          },
+        },
+        item: {
+          entities: {
+            '1': {
+              objectId: 1,
+              title: 'item1',
+            },
+          },
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: itemSchema,
+            array: [itemSchema],
+          },
+        },
+        collection: {
+          entities: {},
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: collectionSchema,
+            array: [collectionSchema],
+          },
+        },
       },
-    ],
-  }),
+    });
+  });
+
+  test('arrayConcat with reset', () => {
+    const { dispatch, getState } = store;
+    const data = [
+      { objectId: 1, title: 'item1', user: { objectId: 1, name: 'Bob Wei' } },
+      { objectId: 2, title: 'item2' },
+    ];
+    dispatch(arrayConcat(data, 'item', 'all', { reset: true }));
+    expect(getState()).toEqual({
+      models: {
+        user: {
+          entities: {
+            '1': { objectId: 1, name: 'Bob Wei' },
+          },
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: userSchema,
+            array: [userSchema],
+          },
+        },
+        item: {
+          entities: {
+            '1': {
+              objectId: 1,
+              title: 'item1',
+              user: 1,
+            },
+            '2': { objectId: 2, title: 'item2' },
+          },
+          arrays: {
+            all: [1, 2],
+          },
+          schemas: {
+            entity: itemSchema,
+            array: [itemSchema],
+          },
+        },
+        collection: {
+          entities: {},
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: collectionSchema,
+            array: [collectionSchema],
+          },
+        },
+      },
+    });
+  });
+
+  test('arrayConcat', () => {
+    const { dispatch, getState } = store;
+    const data = [
+      { objectId: 1, title: 'item1', user: { objectId: 1, name: 'Bob Wei' } },
+      { objectId: 2, title: 'item2' },
+    ];
+    dispatch(arrayConcat(data, 'item', 'all'));
+    expect(getState()).toEqual({
+      models: {
+        user: {
+          entities: {
+            '1': { objectId: 1, name: 'Bob Wei' },
+          },
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: userSchema,
+            array: [userSchema],
+          },
+        },
+        item: {
+          entities: {
+            '1': {
+              objectId: 1,
+              title: 'item1',
+              user: 1,
+            },
+            '2': { objectId: 2, title: 'item2' },
+          },
+          arrays: {
+            all: [1, 2, 1, 2],
+          },
+          schemas: {
+            entity: itemSchema,
+            array: [itemSchema],
+          },
+        },
+        collection: {
+          entities: {},
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: collectionSchema,
+            array: [collectionSchema],
+          },
+        },
+      },
+    });
+  });
+
+  test('entityMerge for update', () => {
+    const { dispatch, getState } = store;
+    dispatch(entityMerge({ objectId: 1, title: 'Hello World' }, 'item'));
+    expect(getState()).toEqual({
+      models: {
+        user: {
+          entities: {
+            '1': { objectId: 1, name: 'Bob Wei' },
+          },
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: userSchema,
+            array: [userSchema],
+          },
+        },
+        item: {
+          entities: {
+            '1': {
+              objectId: 1,
+              title: 'Hello World',
+              user: 1,
+            },
+            '2': { objectId: 2, title: 'item2' },
+          },
+          arrays: {
+            all: [1, 2, 1, 2],
+          },
+          schemas: {
+            entity: itemSchema,
+            array: [itemSchema],
+          },
+        },
+        collection: {
+          entities: {},
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: collectionSchema,
+            array: [collectionSchema],
+          },
+        },
+      },
+    });
+  });
+
+  test('entityMerge for insert', () => {
+    const { dispatch, getState } = store;
+    dispatch(entityMerge({ objectId: 3, title: 'item3' }, 'item'));
+    expect(getState()).toEqual({
+      models: {
+        user: {
+          entities: {
+            '1': { objectId: 1, name: 'Bob Wei' },
+          },
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: userSchema,
+            array: [userSchema],
+          },
+        },
+        item: {
+          entities: {
+            '1': {
+              objectId: 1,
+              title: 'Hello World',
+              user: 1,
+            },
+            '2': { objectId: 2, title: 'item2' },
+            '3': { objectId: 3, title: 'item3' },
+          },
+          arrays: {
+            all: [1, 2, 1, 2],
+          },
+          schemas: {
+            entity: itemSchema,
+            array: [itemSchema],
+          },
+        },
+        collection: {
+          entities: {},
+          arrays: {
+            all: [],
+          },
+          schemas: {
+            entity: collectionSchema,
+            array: [collectionSchema],
+          },
+        },
+      },
+    });
+  });
 });
-const store = createStore(rootReducer);
-const { getState, dispatch } = store;
-```
 
-```js
-expect(getState()).toEqual({
-  models: {
-    user: {
-      entities: {},
-      arrays: {
-        all: [],
-      },
-    },
-    item: {
-      entities: {
-        '1': {
-          objectId: 1,
-          title: 'item1',
-        },
-      },
-      arrays: {
-        all: [1],
-      },
-    },
-    collection: {
-      entities: {},
-      arrays: {
-        all: [],
-      },
-    },
-  },
-});
-```
-
-#### Dispatch actions to update state
-
-Remove all from array with model === 'item' && arrayId === 'all'
-
-```js
-dispatch(arrayRemoveAll('item', 'all'));
-```
-
-```js
-expect(getState()).toEqual({
-  models: {
-    user: {
-      entities: {},
-      arrays: {
-        all: [],
-      },
-    },
-    item: {
-      entities: {
-        '1': {
-          objectId: 1,
-          title: 'item1',
-        },
-      },
-      arrays: {
-        all: [],
-      },
-    },
-    collection: {
-      entities: {},
-      arrays: {
-        all: [],
-      },
-    },
-  },
-});
-```
-
-Concat data to array with model === 'item' && arrayId === 'all'
-
-```js
-const data = [
-  { objectId: 1, title: 'item1', user: { objectId: 1, name: 'Bob Wei' } },
-  { objectId: 2, title: 'item2' },
-];
-dispatch(arrayConcat(data, 'item', 'all'));
-```
-
-```js
-expect(getState()).toEqual({
-  models: {
-    user: {
-      entities: {
-        1: { objectId: 1, name: 'Bob Wei' },
-      },
-      arrays: {
-        all: [],
-      },
-    },
-    item: {
-      entities: {
-        '1': {
-          objectId: 1,
-          title: 'item1',
-        },
-        '2': {
-          objectId: 2,
-          title: 'item2',
-        },
-      },
-      arrays: {
-        all: [1, 2],
-      },
-    },
-    collection: {
-      entities: {},
-      arrays: {
-        all: [],
-      },
-    },
-  },
-});
-```
-
-```js
-const data2 = [
-  { objectId: 1, title: 'item1', user: { objectId: 1, name: 'Bob Wei' } },
-  { objectId: 2, title: 'item2' },
-];
-dispatch(arrayConcat(data2, 'item', 'all', { reset: true }));
-expect(getState()).toEqual({
-  models: {
-    user: {
-      entities: {
-        1: { objectId: 1, name: 'Bob Wei' },
-      },
-      arrays: {
-        all: [],
-      },
-    },
-    item: {
-      entities: {
-        '1': {
-          objectId: 1,
-          title: 'item1',
-          user: 1,
-        },
-        '2': {
-          objectId: 2,
-          title: 'item2',
-        },
-      },
-      arrays: {
-        all: [1, 2],
-      },
-    },
-    collection: {
-      entities: {},
-      arrays: {
-        all: [],
-      },
-    },
-  },
-});
-```
-
-### Denormalize data and mapStateToprops
-
-Create efficient selector with reselect
-```js
-const selector = createSelector(
-  /* user entities */
-  R.path(['models', 'user', 'entities']),
-  /* item entities */
-  R.path(['models', 'item', 'entities']),
-  /* item array with arrayId === 'all' */
-  R.path(['models', 'item', 'arrays', 'all']),
-  (user, item, itemList) => ({
-    itemList: denormalize(itemList, [itemSchema], { user, item }),
-  }),
-);
-```
-
-mapStateToprops
-```js
-expect(selector(getState())).toEqual({
-  itemList: [
-    { objectId: 1, title: 'item1', user: { objectId: 1, name: 'Bob Wei' } },
-    { objectId: 2, title: 'item2' },
-  ],
-});
-```
-
-Merge data to entities with model === 'item'
-
-```js
-dispatch(entityMerge({ objectId: 1, title: 'Hello World' }, 'item'));
-```
-
-```js
-expect(getState()).toEqual({
-  models: {
-    user: {
-      entities: {
-        1: { objectId: 1, name: 'Bob Wei' },
-      },
-      arrays: {
-        all: [],
-      },
-    },
-    item: {
-      entities: {
-        '1': {
-          objectId: 1,
-          title: 'Hello World',
-          user: 1,
-        },
-        '2': {
-          objectId: 2,
-          title: 'item2',
-        },
-      },
-      arrays: {
-        all: [1, 2],
-      },
-    },
-    collection: {
-      entities: {},
-      arrays: {
-        all: [],
-      },
-    },
-  },
-});
-```
-
-```js
-dispatch(entityMerge({ objectId: 3, title: 'item3' }, 'item'));
-```
-
-```js
-expect(getState()).toEqual({
-  models: {
-    user: {
-      entities: {
-        1: { objectId: 1, name: 'Bob Wei' },
-      },
-      arrays: {
-        all: [],
-      },
-    },
-    item: {
-      entities: {
-        '1': {
-          objectId: 1,
-          title: 'Hello World',
-          user: 1,
-        },
-        '2': {
-          objectId: 2,
-          title: 'item2',
-        },
-        '3': {
-          objectId: 3,
-          title: 'item3',
-        },
-      },
-      arrays: {
-        all: [1, 2],
-      },
-    },
-    collection: {
-      entities: {},
-      arrays: {
-        all: [],
-      },
-    },
-  },
-});
 ```
