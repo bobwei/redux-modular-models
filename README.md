@@ -4,6 +4,7 @@ Manage models state for CRUD with ease.
 
 - [Installation](#installation)
 - [Usage Example](#usage-example)
+  - [Create model reducer and update state with actions](#create-model-reducer-and-update-state-with-actions)
 
 
 ## Installation
@@ -17,7 +18,7 @@ yarn add redux-modular-models
 
 The store should know how to handle actions. To enable this, we need to create the modelReducer to your store. It serves for all of your models, so you only have to pass it once.
 
-#### Create model reducer
+### Create model reducer and update state with actions
 
 ```js
 import { createStore, combineReducers } from 'redux';
