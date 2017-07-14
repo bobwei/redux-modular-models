@@ -5,6 +5,7 @@ Manage models state for CRUD with ease.
 - [Installation](#installation)
 - [Usage Example](#usage-example)
   - [Create model reducer and update state with actions](#create-model-reducer-and-update-state-with-actions)
+  - [Selectors](./docs/selectors.md)
 
 
 ## Installation
