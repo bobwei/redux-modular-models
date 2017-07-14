@@ -7,6 +7,12 @@ describe('can concat empty array', () => {
   const options = { idAttribute: 'objectId' };
   const userSchema = new schema.Entity('user', {}, options);
   const itemSchema = new schema.Entity('item', { user: userSchema }, options);
+  const collectionSchema = new schema.Entity(
+    'collection',
+    { user: userSchema },
+    options,
+  );
+
   const rootReducer = combineReducers({
     models: createReducer({
       models: [
@@ -31,6 +37,7 @@ describe('can concat empty array', () => {
         },
         {
           name: 'collection',
+          schema: collectionSchema,
         },
       ],
     }),
@@ -46,6 +53,10 @@ describe('can concat empty array', () => {
           arrays: {
             all: [],
           },
+          schemas: {
+            entity: userSchema,
+            array: [userSchema],
+          },
         },
         item: {
           entities: {
@@ -57,11 +68,19 @@ describe('can concat empty array', () => {
           arrays: {
             all: [1],
           },
+          schemas: {
+            entity: itemSchema,
+            array: [itemSchema],
+          },
         },
         collection: {
           entities: {},
           arrays: {
             all: [],
+          },
+          schemas: {
+            entity: collectionSchema,
+            array: [collectionSchema],
           },
         },
       },
@@ -77,6 +96,10 @@ describe('can concat empty array', () => {
           arrays: {
             all: [],
           },
+          schemas: {
+            entity: userSchema,
+            array: [userSchema],
+          },
         },
         item: {
           entities: {
@@ -88,11 +111,19 @@ describe('can concat empty array', () => {
           arrays: {
             all: [1],
           },
+          schemas: {
+            entity: itemSchema,
+            array: [itemSchema],
+          },
         },
         collection: {
           entities: {},
           arrays: {
             all: [],
+          },
+          schemas: {
+            entity: collectionSchema,
+            array: [collectionSchema],
           },
         },
       },
@@ -117,6 +148,10 @@ describe('can concat empty array', () => {
           arrays: {
             all: [],
           },
+          schemas: {
+            entity: userSchema,
+            array: [userSchema],
+          },
         },
         item: {
           entities: {
@@ -133,11 +168,19 @@ describe('can concat empty array', () => {
           arrays: {
             all: [1, 2],
           },
+          schemas: {
+            entity: itemSchema,
+            array: [itemSchema],
+          },
         },
         collection: {
           entities: {},
           arrays: {
             all: [],
+          },
+          schemas: {
+            entity: collectionSchema,
+            array: [collectionSchema],
           },
         },
       },
