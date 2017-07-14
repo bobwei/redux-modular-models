@@ -2,7 +2,13 @@ import { createStore, combineReducers } from 'redux';
 import { schema } from 'normalizr';
 import { createStructuredSelector } from 'reselect';
 
-import { createReducer, getEntities, getSchema, getObject } from '../src/index';
+import {
+  createReducer,
+  getEntities,
+  getSchema,
+  getObject,
+  getArray,
+} from '../src/index';
 
 describe('selectors', () => {
   const options = { idAttribute: 'objectId' };
@@ -91,6 +97,32 @@ describe('selectors', () => {
         objectId: 1,
         title: 'item1',
       },
+    });
+  });
+
+  test('getArray', () => {
+    const { getState } = store;
+    const selector = getArray('item', 'all');
+    expect(selector(getState())).toEqual([
+      {
+        objectId: 1,
+        title: 'item1',
+      },
+    ]);
+  });
+
+  test('mapStateToProps with getArray', () => {
+    const { getState } = store;
+    const mapStateToProps = createStructuredSelector({
+      items: getArray('item', 'all'),
+    });
+    expect(mapStateToProps(getState())).toEqual({
+      items: [
+        {
+          objectId: 1,
+          title: 'item1',
+        },
+      ],
     });
   });
 });
