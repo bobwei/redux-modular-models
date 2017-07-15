@@ -2,6 +2,7 @@
 import R from 'ramda';
 import { handleActions } from 'redux-actions';
 import { normalize } from 'normalizr';
+import { REHYDRATE } from 'redux-persist/constants';
 
 import createInitialState from './createInitialState';
 import { arrayRemoveAll, arrayConcat, entityMerge } from './actions';
@@ -85,6 +86,7 @@ const createReducer = ({ models }: Options) => {
         )(state);
         return result;
       },
+      [REHYDRATE]: (state = {}, { payload }) => R.mergeDeepLeft(state, payload),
     },
     initialState,
   );
