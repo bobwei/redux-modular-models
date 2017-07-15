@@ -53,14 +53,38 @@ describe('selectors', () => {
         {
           storage: {
             data: {
-              models: `
-                  {
-                    "user": {}
-                  }
-                `,
+              models: {
+                user: {
+                  entities: {},
+                  arrays: {
+                    all: [],
+                  },
+                },
+                item: {
+                  entities: {
+                    '1': {
+                      objectId: 1,
+                      title: 'item1',
+                    },
+                  },
+                  arrays: {
+                    all: [1],
+                  },
+                },
+                collection: {
+                  entities: {},
+                  arrays: {
+                    all: [],
+                  },
+                },
+              },
+              testKey: {
+                data: 'test data',
+              },
             },
             getItem(key, cb) {
-              process.nextTick(() => cb(null, this.data[key]));
+              const serializedData = JSON.stringify(this.data[key]);
+              process.nextTick(() => cb(null, serializedData));
             },
             getAllKeys(cb) {
               process.nextTick(() => cb(null, Object.keys(this.data)));
@@ -71,8 +95,13 @@ describe('selectors', () => {
         () => {
           try {
             expect(getState()).toHaveProperty('models.user.schemas');
-            expect(getState()).toHaveProperty('models.user.schemas');
-            expect(getState()).toHaveProperty('models.user.schemas');
+            expect(getState()).toHaveProperty('models.item.schemas');
+            expect(getState()).toHaveProperty('models.collection.schemas');
+            expect(Object.keys(getState().models)).toEqual([
+              'user',
+              'item',
+              'collection',
+            ]);
             resolve();
           } catch (e) {
             reject(e);
