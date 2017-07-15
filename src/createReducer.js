@@ -2,11 +2,14 @@
 import R from 'ramda';
 import { handleActions } from 'redux-actions';
 import { normalize } from 'normalizr';
+import { REHYDRATE } from 'redux-persist/constants';
 
 import createInitialState from './createInitialState';
 import { arrayRemoveAll, arrayConcat, entityMerge } from './actions';
 
 type Options = {
+  /* Used to know it's key name in combineReducers */
+  reducerKey: string,
   models: Array<{
     name: string,
     initialState: any,
@@ -14,7 +17,7 @@ type Options = {
   }>,
 };
 
-const createReducer = ({ models }: Options) => {
+const createReducer = ({ reducerKey = 'models', models }: Options) => {
   const initialState = createInitialState(models);
   const indexedModels = R.indexBy(R.prop('name'))(models);
 
@@ -85,6 +88,10 @@ const createReducer = ({ models }: Options) => {
         )(state);
         return result;
       },
+      [REHYDRATE]: R.converge(R.mergeDeepLeft, [
+        R.identity,
+        R.compose(R.pick([reducerKey]), R.propOr({}, 'payload')),
+      ]),
     },
     initialState,
   );
