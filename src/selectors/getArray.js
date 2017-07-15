@@ -2,15 +2,15 @@ import R from 'ramda';
 import { createSelector } from 'reselect';
 import { denormalize } from 'normalizr';
 
-import REDUCER_NAME from '../constants/REDUCER_NAME';
+import REDUCER_KEY from '../constants/REDUCER_KEY';
 import getEntities from './getEntities';
 import getSchema from './getSchema';
 
-const getArray = (model, arrayId, { reducerName = REDUCER_NAME } = {}) =>
+const getArray = (model, arrayId, { reducerKey = REDUCER_KEY } = {}) =>
   createSelector(
-    R.path([reducerName, model, 'arrays', arrayId]),
+    R.path([reducerKey, model, 'arrays', arrayId]),
     getSchema(model, 'array'),
-    getEntities({ reducerName }),
+    getEntities({ reducerKey }),
     denormalize,
   );
 

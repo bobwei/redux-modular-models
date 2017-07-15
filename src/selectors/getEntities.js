@@ -1,9 +1,9 @@
 import R from 'ramda';
 import { createSelector } from 'reselect';
 
-import REDUCER_NAME from '../constants/REDUCER_NAME';
+import REDUCER_KEY from '../constants/REDUCER_KEY';
 
-const getEntities = ({ reducerName = REDUCER_NAME } = {}) =>
-  createSelector(R.path([reducerName]), R.map(R.path(['entities'])));
+const getEntities = ({ reducerKey = REDUCER_KEY } = {}) =>
+  createSelector(R.path([reducerKey]), R.map(R.path(['entities'])));
 
 export default getEntities;

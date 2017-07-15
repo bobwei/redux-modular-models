@@ -1,8 +1,8 @@
 import R from 'ramda';
 
-import REDUCER_NAME from '../constants/REDUCER_NAME';
+import REDUCER_KEY from '../constants/REDUCER_KEY';
 
-const getSchema = (model, schemaId, { reducerName = REDUCER_NAME } = {}) =>
-  R.path([reducerName, model, 'schemas', schemaId]);
+const getSchema = (model, schemaId, { reducerKey = REDUCER_KEY } = {}) =>
+  R.path([reducerKey, model, 'schemas', schemaId]);
 
 export default getSchema;
