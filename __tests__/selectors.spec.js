@@ -66,6 +66,11 @@ describe('selectors', () => {
     });
   });
 
+  test('getEntities with default value', () => {
+    const selector = getEntities();
+    expect(selector({})).toEqual({});
+  });
+
   test(`getSchema('item', 'entity')`, () => {
     const { getState } = store;
     const selector = getSchema('item', 'entity');
@@ -85,6 +90,12 @@ describe('selectors', () => {
       objectId: 1,
       title: 'item1',
     });
+  });
+
+  test('getObject with default value', () => {
+    const { getState } = store;
+    const selector = getObject('item', 'non-existed');
+    expect(selector(getState())).toEqual({});
   });
 
   test('mapStateToProps with getObject', () => {
@@ -109,6 +120,12 @@ describe('selectors', () => {
         title: 'item1',
       },
     ]);
+  });
+
+  test('getArray with default value', () => {
+    const { getState } = store;
+    const selector = getArray('item', 'non-existed');
+    expect(selector(getState())).toEqual([]);
   });
 
   test('mapStateToProps with getArray', () => {

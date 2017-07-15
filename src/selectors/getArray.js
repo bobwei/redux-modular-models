@@ -7,11 +7,14 @@ import getEntities from './getEntities';
 import getSchema from './getSchema';
 
 const getArray = (model, arrayId, { reducerKey = REDUCER_KEY } = {}) =>
-  createSelector(
-    R.path([reducerKey, model, 'arrays', arrayId]),
-    getSchema(model, 'array'),
-    getEntities({ reducerKey }),
-    denormalize,
+  R.compose(
+    R.defaultTo([]),
+    createSelector(
+      R.path([reducerKey, model, 'arrays', arrayId]),
+      getSchema(model, 'array'),
+      getEntities({ reducerKey }),
+      denormalize,
+    ),
   );
 
 export default getArray;
