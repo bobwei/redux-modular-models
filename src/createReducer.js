@@ -4,6 +4,7 @@ import { handleActions } from 'redux-actions';
 import { normalize } from 'normalizr';
 import { REHYDRATE } from 'redux-persist/constants';
 
+import REDUCER_KEY from './constants/REDUCER_KEY';
 import createInitialState from './createInitialState';
 import { arrayRemoveAll, arrayConcat, entityMerge } from './actions';
 
@@ -17,7 +18,7 @@ type Options = {
   }>,
 };
 
-const createReducer = ({ reducerKey = 'models', models }: Options) => {
+const createReducer = ({ reducerKey = REDUCER_KEY, models }: Options) => {
   const initialState = createInitialState(models);
   const indexedModels = R.indexBy(R.prop('name'))(models);
 
