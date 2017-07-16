@@ -7,10 +7,13 @@ import getEntities from './getEntities';
 import getSchema from './getSchema';
 
 const getObject = (model, objectId, { reducerKey = REDUCER_KEY } = {}) =>
-  createSelector(
-    getSchema(model, 'entity', { reducerKey }),
-    getEntities({ reducerKey }),
-    R.partial(denormalize, [objectId]),
+  R.compose(
+    R.defaultTo({}),
+    createSelector(
+      getSchema(model, 'entity', { reducerKey }),
+      getEntities({ reducerKey }),
+      R.partial(denormalize, [objectId]),
+    ),
   );
 
 export default getObject;
