@@ -15,12 +15,14 @@ const config = {
     ramda: 'ramda',
     redux: 'redux',
     'redux-actions': 'redux-actions',
+    'redux-persist': 'redux-persist',
+    reselect: 'reselect',
   },
   module: {
     loaders: [
       {
         test: /\.(js|jsx)$/,
-        loaders: ['babel-loader', 'eslint-loader', 'remove-flow-types-loader'],
+        loaders: ['babel-loader', 'remove-flow-types-loader'],
         include: SRC_PATH,
         exclude: /node_modules/,
       },
