@@ -89,9 +89,12 @@ const createReducer = ({ reducerKey = REDUCER_KEY, models }: Options) => {
         )(state);
         return result;
       },
-      [REHYDRATE]: R.converge(R.mergeDeepLeft, [
+      /*
+        Merge initialState and rehydratedState with mergeDeepRight
+      */
+      [REHYDRATE]: R.useWith(R.mergeDeepRight, [
         R.identity,
-        R.compose(R.pick([reducerKey]), R.propOr({}, 'payload')),
+        R.compose(R.propOr({}, reducerKey), R.propOr({}, 'payload')),
       ]),
     },
     initialState,

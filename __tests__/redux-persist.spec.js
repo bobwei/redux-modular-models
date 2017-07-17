@@ -23,17 +23,6 @@ describe('selectors', () => {
         },
         {
           name: 'item',
-          initialState: {
-            entities: {
-              '1': {
-                objectId: 1,
-                title: 'item1',
-              },
-            },
-            arrays: {
-              all: [1],
-            },
-          },
           schema: itemSchema,
         },
         {
@@ -46,38 +35,41 @@ describe('selectors', () => {
   const store = createStore(rootReducer, {}, autoRehydrate());
   const { getState } = store;
 
-  it('should use mergeDeepLeft as merge strategy when merging initialState and rehydrate state', () =>
+  it('should use mergeDeepRight as merge strategy when merging initialState and rehydratedState', () =>
     new Promise((resolve, reject) => {
+      const rehydratedState = {
+        models: {
+          user: {
+            entities: {},
+            arrays: {
+              all: [],
+            },
+          },
+          item: {
+            entities: {
+              '1': {
+                objectId: 1,
+                title: 'item1',
+              },
+            },
+            arrays: {
+              all: [1],
+            },
+          },
+          collection: {
+            entities: {},
+            arrays: {
+              all: [],
+            },
+          },
+        },
+      };
       persistStore(
         store,
         {
           storage: {
             data: {
-              models: {
-                user: {
-                  entities: {},
-                  arrays: {
-                    all: [],
-                  },
-                },
-                item: {
-                  entities: {
-                    '1': {
-                      objectId: 1,
-                      title: 'item1',
-                    },
-                  },
-                  arrays: {
-                    all: [1],
-                  },
-                },
-                collection: {
-                  entities: {},
-                  arrays: {
-                    all: [],
-                  },
-                },
-              },
+              ...rehydratedState,
               testKey: {
                 data: 'test data',
               },
@@ -102,6 +94,48 @@ describe('selectors', () => {
               'item',
               'collection',
             ]);
+            /*
+              Expected merged state with initialState and rehydratedState
+            */
+            expect(getState()).toEqual({
+              models: {
+                user: {
+                  entities: {},
+                  arrays: {
+                    all: [],
+                  },
+                  schemas: {
+                    entity: userSchema,
+                    array: [userSchema],
+                  },
+                },
+                item: {
+                  entities: {
+                    '1': {
+                      objectId: 1,
+                      title: 'item1',
+                    },
+                  },
+                  arrays: {
+                    all: [1],
+                  },
+                  schemas: {
+                    entity: itemSchema,
+                    array: [itemSchema],
+                  },
+                },
+                collection: {
+                  entities: {},
+                  arrays: {
+                    all: [],
+                  },
+                  schemas: {
+                    entity: collectionSchema,
+                    array: [collectionSchema],
+                  },
+                },
+              },
+            });
             resolve();
           } catch (e) {
             reject(e);
