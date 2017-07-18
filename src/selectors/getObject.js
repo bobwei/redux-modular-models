@@ -6,7 +6,7 @@ import REDUCER_KEY from '../constants/REDUCER_KEY';
 import getEntities from './getEntities';
 import getSchema from './getSchema';
 
-const getObject = (model, objectId, { reducerKey = REDUCER_KEY } = {}) =>
+const getObject = (model, objectId, state, { reducerKey = REDUCER_KEY } = {}) =>
   R.compose(
     R.defaultTo({}),
     createSelector(
@@ -14,6 +14,6 @@ const getObject = (model, objectId, { reducerKey = REDUCER_KEY } = {}) =>
       getEntities({ reducerKey }),
       R.partial(denormalize, [objectId]),
     ),
-  );
+  )(state);
 
-export default getObject;
+export default R.curry(getObject);

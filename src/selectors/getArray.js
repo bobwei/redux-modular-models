@@ -6,7 +6,7 @@ import REDUCER_KEY from '../constants/REDUCER_KEY';
 import getEntities from './getEntities';
 import getSchema from './getSchema';
 
-const getArray = (model, arrayId, { reducerKey = REDUCER_KEY } = {}) =>
+const getArray = (model, arrayId, state, { reducerKey = REDUCER_KEY } = {}) =>
   R.compose(
     R.defaultTo([]),
     createSelector(
@@ -15,6 +15,6 @@ const getArray = (model, arrayId, { reducerKey = REDUCER_KEY } = {}) =>
       getEntities({ reducerKey }),
       denormalize,
     ),
-  );
+  )(state);
 
-export default getArray;
+export default R.curry(getArray);
