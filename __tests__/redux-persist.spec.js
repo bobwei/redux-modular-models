@@ -44,6 +44,7 @@ describe('selectors', () => {
             arrays: {
               all: [],
             },
+            schemas: 'key should be ignored',
           },
           item: {
             entities: {
@@ -55,12 +56,14 @@ describe('selectors', () => {
             arrays: {
               all: [1],
             },
+            schemas: 'key should be ignored',
           },
           collection: {
             entities: {},
             arrays: {
               all: [],
             },
+            schemas: 'key should be ignored',
           },
         },
       };

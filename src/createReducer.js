@@ -90,11 +90,17 @@ const createReducer = ({ reducerKey = REDUCER_KEY, models }: Options) => {
         return result;
       },
       /*
-        Merge initialState and rehydratedState with mergeDeepRight
+        Merge initialState and rehydratedState with mergeDeepRight.
+        Ignore special key 'schemas' from rehydratedState since we do not handle
+        serialization correctly. So for now, just ignore it.
       */
       [REHYDRATE]: R.useWith(R.mergeDeepRight, [
         R.identity,
-        R.compose(R.propOr({}, reducerKey), R.propOr({}, 'payload')),
+        R.compose(
+          R.map(R.dissoc('schemas')),
+          R.propOr({}, reducerKey),
+          R.propOr({}, 'payload'),
+        ),
       ]),
     },
     initialState,
