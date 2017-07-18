@@ -1,6 +1,7 @@
 import { createStore, combineReducers } from 'redux';
 import { schema } from 'normalizr';
-import { createStructuredSelector } from 'reselect';
+import { createStructuredSelector, createSelector } from 'reselect';
+import R from 'ramda';
 
 import {
   createReducer,
@@ -21,10 +22,24 @@ describe('selectors', () => {
   );
 
   const rootReducer = combineReducers({
+    auth: () => ({
+      credentials: {
+        objectId: 1,
+        sessionToken: '123',
+      },
+    }),
     models: createReducer({
       models: [
         {
           name: 'user',
+          initialState: {
+            entities: {
+              '1': {
+                objectId: 1,
+                name: 'Bob Wei',
+              },
+            },
+          },
           schema: userSchema,
         },
         {
@@ -55,7 +70,12 @@ describe('selectors', () => {
     const { getState } = store;
     const selector = getEntities();
     expect(selector(getState())).toEqual({
-      user: {},
+      user: {
+        '1': {
+          objectId: 1,
+          name: 'Bob Wei',
+        },
+      },
       item: {
         '1': {
           objectId: 1,
@@ -140,6 +160,23 @@ describe('selectors', () => {
           title: 'item1',
         },
       ],
+    });
+  });
+
+  test('mapStateToProps with curried getObject', () => {
+    const { getState } = store;
+    const mapStateToProps = createStructuredSelector({
+      user: createSelector(
+        R.path(['auth', 'credentials', 'objectId']),
+        R.identity,
+        R.partial(getObject, ['user']),
+      ),
+    });
+    expect(mapStateToProps(getState())).toEqual({
+      user: {
+        objectId: 1,
+        name: 'Bob Wei',
+      },
     });
   });
 });
