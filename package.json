@@ -1,6 +1,6 @@
 {
   "name": "redux-modular-models",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Manage models state for CRUD with ease.",
   "main": "./lib/index.js",
   "scripts": {
