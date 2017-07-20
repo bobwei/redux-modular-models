@@ -1,5 +1,5 @@
 import R from 'ramda';
-import { createSelector } from 'reselect';
+import { createSelector, defaultMemoize } from 'reselect';
 import { denormalize } from 'normalizr';
 
 import REDUCER_KEY from '../constants/REDUCER_KEY';
@@ -16,4 +16,4 @@ const getObject = (model, objectId, state, { reducerKey = REDUCER_KEY } = {}) =>
     ),
   )(state);
 
-export default R.curry(getObject);
+export default R.compose(R.curryN(3), defaultMemoize)(getObject);
