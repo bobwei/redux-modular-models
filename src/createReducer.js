@@ -55,7 +55,7 @@ const createReducer = ({ reducerKey = REDUCER_KEY, models }: Options) => {
           /* concat result to model.arrays.arrayId */
           R.converge(R.assocPath([model, 'arrays', arrayId]), [
             R.compose(
-              R.concat(normalizedData.result),
+              R.concat(R.__, normalizedData.result),
               R.ifElse(
                 R.always(reset),
                 R.always([]),

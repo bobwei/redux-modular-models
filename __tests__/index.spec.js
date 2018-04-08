@@ -193,6 +193,7 @@ describe('can createReducer and update state with actions', () => {
     const data = [
       { objectId: 1, title: 'item1', user: { objectId: 1, name: 'Bob Wei' } },
       { objectId: 2, title: 'item2' },
+      { objectId: 3, title: 'item3' },
     ];
     dispatch(arrayConcat(data, 'item', 'all'));
     expect(getState()).toEqual({
@@ -217,9 +218,10 @@ describe('can createReducer and update state with actions', () => {
               user: 1,
             },
             '2': { objectId: 2, title: 'item2' },
+            '3': { objectId: 3, title: 'item3' },
           },
           arrays: {
-            all: [1, 2, 1, 2],
+            all: [1, 2, 1, 2, 3],
           },
           schemas: {
             entity: itemSchema,
@@ -265,9 +267,10 @@ describe('can createReducer and update state with actions', () => {
               user: 1,
             },
             '2': { objectId: 2, title: 'item2' },
+            '3': { objectId: 3, title: 'item3' },
           },
           arrays: {
-            all: [1, 2, 1, 2],
+            all: [1, 2, 1, 2, 3],
           },
           schemas: {
             entity: itemSchema,
@@ -316,7 +319,7 @@ describe('can createReducer and update state with actions', () => {
             '3': { objectId: 3, title: 'item3' },
           },
           arrays: {
-            all: [1, 2, 1, 2],
+            all: [1, 2, 1, 2, 3],
           },
           schemas: {
             entity: itemSchema,
